@@ -1,13 +1,14 @@
 import { cn } from '@/lib/cn'
 
+/** Light pastel pills for a clean table look; blue uses solid fill + white text. */
 const tones = {
-  neutral: 'bg-[#e8e9ed] text-black shadow-[inset_0_0_0_1px_rgba(15,23,42,0.04)]',
-  black: 'bg-black text-white',
+  neutral: 'bg-[#f0f0f3] text-black',
+  black: 'bg-[#ebebed] text-black',
   blue: 'bg-accent text-white',
-  green: 'bg-green text-white',
-  orange: 'bg-orange text-white',
-  red: 'bg-red text-white',
-  amber: 'bg-amber text-white',
+  green: 'bg-green-soft text-green',
+  orange: 'bg-orange-soft text-orange',
+  red: 'bg-red-soft text-red',
+  amber: 'bg-amber-soft text-amber',
 } as const
 
 export function Badge({

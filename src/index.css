@@ -70,7 +70,6 @@ input,
 select,
 textarea {
   font: inherit;
-  color: inherit;
 }
 
 ::-webkit-scrollbar {
