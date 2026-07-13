@@ -92,12 +92,12 @@ export function ReportsPage() {
 
   return (
     <AppShell search={search} onSearch={(v) => { setSearch(v); setPage(0) }} onNew={() => setNewOpen(true)}>
-      <div className="mb-4 md:hidden">
+      <div className="border-b border-line bg-white px-3 py-3 md:hidden">
         <SearchInput value={search} onChange={(v) => { setSearch(v); setPage(0) }} placeholder="Search reports…" />
       </div>
 
-      <section className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
-        {stats.map((s) => {
+      <section className="grid grid-cols-2 border-b border-line bg-white sm:grid-cols-4 xl:grid-cols-8">
+        {stats.map((s, i) => {
           const active =
             (s.label === 'All Reports' && status === 'All') ||
             (s.label === 'Investigation' && status === 'Under Investigation') ||
@@ -113,10 +113,11 @@ export function ReportsPage() {
                 setPage(0)
               }}
               className={cn(
-                'rounded-[14px] bg-white px-4 py-4 text-left transition duration-200',
-                active
-                  ? 'ring-2 ring-black shadow-[var(--shadow-rest)]'
-                  : 'shadow-[var(--shadow-rest)] hover:shadow-[var(--shadow-hover)]'
+                'border-b border-line px-4 py-4 text-left transition duration-200 xl:border-b-0',
+                i % 2 === 0 ? 'border-r' : 'sm:border-r',
+                i % 4 !== 3 && 'sm:border-r',
+                i !== 7 && 'xl:border-r',
+                active ? 'bg-[#f5f5f7]' : 'hover:bg-[#fafafa]'
               )}
             >
               <div className="text-[26px] font-extrabold leading-none tracking-[-0.05em] text-black">
@@ -130,7 +131,7 @@ export function ReportsPage() {
         })}
       </section>
 
-      <section className="mb-4 rounded-[14px] bg-white p-4 shadow-[var(--shadow-rest)] lg:p-5">
+      <section className="border-b border-line bg-white px-3 py-4 sm:px-4">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
           <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-start lg:gap-x-8 lg:gap-y-4">
             <div className="space-y-2">
@@ -188,7 +189,7 @@ export function ReportsPage() {
         </div>
       </section>
 
-      <section className="hidden overflow-hidden rounded-[14px] bg-white shadow-[var(--shadow-rest)] md:block">
+      <section className="hidden w-full overflow-hidden bg-white md:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1180px]">
             <thead>
@@ -299,11 +300,11 @@ export function ReportsPage() {
         />
       </section>
 
-      <section className="space-y-3 md:hidden">
+      <section className="divide-y divide-line border-b border-line bg-white md:hidden">
         {slice.map((r) => (
           <article
             key={r.id}
-            className="rounded-[14px] bg-white p-4 shadow-[var(--shadow-rest)]"
+            className="p-4"
           >
             <div className="mb-3 flex items-start justify-between gap-2">
               <div>
@@ -339,18 +340,16 @@ export function ReportsPage() {
             </div>
           </article>
         ))}
-        <div className="rounded-[14px] bg-white shadow-[var(--shadow-rest)]">
-          <Pagination
-            from={from}
-            to={to}
-            total={filtered.length}
-            page={safePage}
-            pageCount={pageCount}
-            pageSize={pageSize}
-            onPage={setPage}
-            onPageSize={(n) => { setPageSize(n); setPage(0) }}
-          />
-        </div>
+        <Pagination
+          from={from}
+          to={to}
+          total={filtered.length}
+          page={safePage}
+          pageCount={pageCount}
+          pageSize={pageSize}
+          onPage={setPage}
+          onPageSize={(n) => { setPageSize(n); setPage(0) }}
+        />
       </section>
 
       <NewReportModal open={newOpen} onClose={() => setNewOpen(false)} />

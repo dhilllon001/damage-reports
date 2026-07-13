@@ -68,7 +68,7 @@ export function ReportDetailPage() {
 
   return (
     <AppShell>
-      <div className="mb-5 flex flex-col gap-4 rounded-[20px] bg-[#1d1d1f] p-4 text-white shadow-[var(--shadow-hover)] sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      <div className="mb-0 flex flex-col gap-4 border-b border-black/20 bg-black p-4 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-5">
         <div className="flex items-start gap-3">
           <Link
             to="/"
@@ -97,7 +97,7 @@ export function ReportDetailPage() {
         </div>
       </div>
 
-      <section className="mb-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-6">
+      <section className="grid grid-cols-1 border-b border-line bg-white sm:grid-cols-2 xl:grid-cols-6">
         {[
           { label: 'Truck / Trailer', value: report.unitNo },
           { label: 'Driver', value: report.driver ?? '—' },
@@ -114,26 +114,27 @@ export function ReportDetailPage() {
             highlight: true,
           },
           { label: 'Assigned to', value: report.assignedTo ?? 'Unassigned' },
-        ].map((item) => (
+        ].map((item, i) => (
           <div
             key={item.label}
             className={cn(
-              'rounded-[16px] bg-card px-4 py-3.5 shadow-[var(--shadow-rest)]',
-              item.highlight && 'bg-amber-soft/60 ring-1 ring-amber/20'
+              'border-b border-line px-4 py-3.5 xl:border-b-0',
+              i < 5 && 'xl:border-r',
+              item.highlight && 'bg-amber-soft/50'
             )}
           >
             <div className="text-[10.5px] font-semibold uppercase tracking-[0.06em] text-ink-3">
               {item.label}
             </div>
-            <div className="mt-1 line-clamp-2 text-[13.5px] font-semibold text-ink">
+            <div className="mt-1 line-clamp-2 text-[13.5px] font-semibold text-black">
               {item.value}
             </div>
           </div>
         ))}
       </section>
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.05fr_1fr]">
-        <section className="rounded-[20px] bg-card p-5 shadow-[var(--shadow-rest)]">
+      <div className="grid grid-cols-1 xl:grid-cols-[1.05fr_1fr]">
+        <section className="border-b border-line bg-white p-4 sm:p-5 xl:border-b-0 xl:border-r">
           <div className="mb-4 flex items-center gap-2">
             <Clock3 size={18} className="text-accent" />
             <h2 className="text-[16px] font-bold tracking-[-0.02em]">
@@ -167,7 +168,7 @@ export function ReportDetailPage() {
           </div>
         </section>
 
-        <section className="rounded-[20px] bg-card shadow-[var(--shadow-rest)]">
+        <section className="bg-white">
           <div className="flex flex-wrap gap-1 border-b border-line p-2">
             {(
               [

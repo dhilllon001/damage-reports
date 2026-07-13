@@ -21,7 +21,7 @@ export function AppShell({
   return (
     <div className="min-h-full bg-bg">
       <header className="sticky top-0 z-40 border-b border-black/10 bg-black">
-        <div className="flex h-14 w-full items-center gap-4 px-5 lg:px-8">
+        <div className="flex h-14 w-full items-center gap-3 px-3 sm:px-4">
           <Link to="/" className="shrink-0">
             <div className="text-[16px] font-bold tracking-[-0.03em] text-white">
               Damage Reports
@@ -29,7 +29,7 @@ export function AppShell({
           </Link>
 
           {!isDetail && onSearch && (
-            <div className="mx-auto hidden w-full max-w-xl flex-1 md:block">
+            <div className="mx-auto hidden w-full max-w-2xl flex-1 md:block">
               <SearchInput
                 value={search ?? ''}
                 onChange={onSearch}
@@ -64,7 +64,7 @@ export function AppShell({
           </div>
         </div>
       </header>
-      <main className={cn('w-full px-5 py-5 lg:px-8 lg:py-6', isDetail && 'pb-10')}>
+      <main className={cn('w-full px-0 py-0', isDetail && 'pb-8')}>
         {children}
       </main>
     </div>
