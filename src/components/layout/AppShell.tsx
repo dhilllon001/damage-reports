@@ -20,7 +20,7 @@ export function AppShell({
 
   return (
     <div className="min-h-full bg-bg">
-      <header className="sticky top-0 z-40 border-b border-black/10 bg-black">
+      <header className="sticky top-0 z-40 bg-black shadow-[0_8px_24px_rgba(15,23,42,0.18)]">
         <div className="flex h-14 w-full items-center gap-3 px-3 sm:px-4">
           <Link to="/" className="shrink-0">
             <div className="text-[16px] font-bold tracking-[-0.03em] text-white">
@@ -58,13 +58,13 @@ export function AppShell({
             >
               <Moon size={17} strokeWidth={1.7} />
             </button>
-            <div className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-green text-[12px] font-bold text-white">
+            <div className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-green text-[12px] font-bold text-white shadow-[0_2px_8px_rgba(10,122,62,0.35)]">
               S
             </div>
           </div>
         </div>
       </header>
-      <main className={cn('w-full px-0 py-0', isDetail && 'pb-8')}>
+      <main className={cn('w-full px-3 py-4 sm:px-4 sm:py-5', isDetail && 'pb-10')}>
         {children}
       </main>
     </div>

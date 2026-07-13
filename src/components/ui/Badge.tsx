@@ -1,12 +1,12 @@
 import { cn } from '@/lib/cn'
 
 const tones = {
-  neutral: 'bg-[#f2f2f7] text-black',
-  blue: 'bg-accent-soft text-[#0058b0]',
-  green: 'bg-green-soft text-[#0a7a3e]',
-  orange: 'bg-orange-soft text-[#9a4d00]',
-  red: 'bg-red-soft text-[#b80012]',
-  amber: 'bg-amber-soft text-[#7a5200]',
+  neutral: 'bg-[#e8e9ed] text-black shadow-[inset_0_0_0_1px_rgba(15,23,42,0.04)]',
+  blue: 'bg-accent-soft text-[#0058b0] shadow-[inset_0_0_0_1px_rgba(0,113,227,0.1)]',
+  green: 'bg-green-soft text-[#0a7a3e] shadow-[inset_0_0_0_1px_rgba(10,122,62,0.1)]',
+  orange: 'bg-orange-soft text-[#9a4d00] shadow-[inset_0_0_0_1px_rgba(184,92,0,0.1)]',
+  red: 'bg-red-soft text-[#b80012] shadow-[inset_0_0_0_1px_rgba(215,0,21,0.1)]',
+  amber: 'bg-amber-soft text-[#7a5200] shadow-[inset_0_0_0_1px_rgba(138,90,0,0.1)]',
 } as const
 
 export function Badge({

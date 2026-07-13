@@ -92,14 +92,17 @@ export function ReportsPage() {
     return c
   }, [reports])
 
+  const filtersActive =
+    unitType !== 'All' || category !== 'All' || severity !== 'All' || status !== 'All'
+
   return (
     <AppShell search={search} onSearch={(v) => { setSearch(v); setPage(0) }} onNew={() => setNewOpen(true)}>
-      <div className="border-b border-line bg-white px-3 py-3 md:hidden">
+      <div className="mb-4 rounded-2xl bg-white p-3 shadow-[var(--shadow-rest)] md:hidden">
         <SearchInput value={search} onChange={(v) => { setSearch(v); setPage(0) }} placeholder="Search reports…" />
       </div>
 
-      <section className="grid grid-cols-2 border-b border-line bg-white sm:grid-cols-4 xl:grid-cols-8">
-        {stats.map((s, i) => {
+      <section className="mb-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 xl:grid-cols-8">
+        {stats.map((s) => {
           const active =
             (s.label === 'All Reports' && status === 'All') ||
             (s.label === 'Investigation' && status === 'Under Investigation') ||
@@ -115,11 +118,8 @@ export function ReportsPage() {
                 setPage(0)
               }}
               className={cn(
-                'border-b border-line px-4 py-4 text-left transition duration-200 xl:border-b-0',
-                i % 2 === 0 ? 'border-r' : 'sm:border-r',
-                i % 4 !== 3 && 'sm:border-r',
-                i !== 7 && 'xl:border-r',
-                active ? 'bg-[#f5f5f7]' : 'hover:bg-[#fafafa]'
+                'rounded-2xl bg-white px-4 py-4 text-left shadow-[var(--shadow-rest)] transition duration-200 ease-[var(--ease-apple)] hover:shadow-[var(--shadow-hover)]',
+                active && 'bg-[#f0f1f4] ring-2 ring-black/10'
               )}
             >
               <div className="text-[26px] font-extrabold leading-none tracking-[-0.05em] text-black">
@@ -133,11 +133,11 @@ export function ReportsPage() {
         })}
       </section>
 
-      <section className="border-b border-line bg-[#fbfbfc]">
-        <div className="flex items-center gap-2 border-b border-line/80 px-4 py-2.5">
-          <SlidersHorizontal size={14} strokeWidth={2} className="text-black/40" />
+      <section className="mb-4 overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)]">
+        <div className="flex items-center gap-2 border-b border-line bg-[#f3f4f7] px-4 py-2.5">
+          <SlidersHorizontal size={14} strokeWidth={2} className="text-black/45" />
           <span className="text-[13px] font-semibold text-black">Filters</span>
-          {(unitType !== 'All' || category !== 'All' || severity !== 'All' || status !== 'All') && (
+          {filtersActive && (
             <button
               type="button"
               onClick={() => {
@@ -147,7 +147,7 @@ export function ReportsPage() {
                 setStatus('All')
                 setPage(0)
               }}
-              className="ml-auto inline-flex items-center gap-1 rounded-full bg-black/[0.05] px-2.5 py-1 text-[12px] font-semibold text-black transition hover:bg-black/[0.08]"
+              className="ml-auto inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[12px] font-semibold text-black shadow-[var(--shadow-rest)] transition hover:bg-[#f8f8fa]"
             >
               <X size={12} strokeWidth={2.4} />
               Clear
@@ -155,7 +155,7 @@ export function ReportsPage() {
           )}
         </div>
 
-        <div className="flex flex-col gap-3.5 px-4 py-3.5 lg:gap-3">
+        <div className="space-y-3.5 bg-[#f7f8fa] px-4 py-4">
           <div className="flex flex-col gap-3.5 xl:flex-row xl:items-center xl:justify-between xl:gap-6">
             <div className="flex flex-col gap-3.5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:gap-y-3">
               <FilterGroup label="Unit">
@@ -170,7 +170,7 @@ export function ReportsPage() {
                 />
               </FilterGroup>
 
-              <div className="hidden h-7 w-px bg-line lg:block" aria-hidden />
+              <div className="hidden h-7 w-px bg-line-strong/70 lg:block" aria-hidden />
 
               <FilterGroup label="Category">
                 <Segment
@@ -193,7 +193,7 @@ export function ReportsPage() {
                 id="status-filter"
                 value={status}
                 onChange={(e) => { setStatus(e.target.value as 'All' | ReportStatus); setPage(0) }}
-                className="h-9 appearance-none rounded-full border border-black/10 bg-white py-0 pl-3.5 pr-9 text-[13px] font-semibold text-black shadow-[0_1px_2px_rgba(0,0,0,0.04)] outline-none transition hover:border-black/20 focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,113,227,0.15)]"
+                className="h-9 appearance-none rounded-full border border-black/10 bg-white py-0 pl-3.5 pr-9 text-[13px] font-semibold text-black shadow-[var(--shadow-rest)] outline-none transition hover:border-black/20 focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,113,227,0.15)]"
               >
                 <option value="All">Status · All</option>
                 {(['Draft', 'Initial', 'Under Investigation', 'Under Repair', 'Invoiced', 'Closed'] as ReportStatus[]).map((s) => (
@@ -213,8 +213,6 @@ export function ReportsPage() {
             </div>
           </div>
 
-          <div className="h-px w-full bg-line/80" />
-
           <FilterGroup label="Severity">
             <Segment
               value={severity}
@@ -232,7 +230,7 @@ export function ReportsPage() {
         </div>
       </section>
 
-      <section className="hidden w-full overflow-hidden bg-white md:block">
+      <section className="hidden overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)] md:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1180px]">
             <thead>
@@ -251,7 +249,7 @@ export function ReportsPage() {
                 ].map((h) => (
                   <th
                     key={h}
-                    className="bg-[#fafafa] px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.04em] text-black"
+                    className="bg-[#eef0f4] px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.04em] text-black"
                   >
                     {h}
                   </th>
@@ -259,10 +257,13 @@ export function ReportsPage() {
               </tr>
             </thead>
             <tbody>
-              {slice.map((r) => (
+              {slice.map((r, idx) => (
                 <tr
                   key={r.id}
-                  className="border-b border-line/70 transition hover:bg-[#f7f7f8]"
+                  className={cn(
+                    'border-b border-line/60 transition hover:bg-[#f3f4f7]',
+                    idx % 2 === 1 && 'bg-[#fafafb]'
+                  )}
                 >
                   <td className="px-5 py-4">
                     <button
@@ -343,46 +344,45 @@ export function ReportsPage() {
         />
       </section>
 
-      <section className="divide-y divide-line border-b border-line bg-white md:hidden">
-        {slice.map((r) => (
-          <article
-            key={r.id}
-            className="p-4"
-          >
-            <div className="mb-3 flex items-start justify-between gap-2">
-              <div>
-                <button
-                  onClick={() => navigate(`/reports/${r.id}`)}
-                  className="font-mono text-[13px] font-bold text-accent"
-                >
-                  #{r.id.slice(-8)}
-                </button>
-                <div className="mt-1 text-[15px] font-bold text-black">
-                  {r.unitType} {r.unitNo}
+      <section className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)] md:hidden">
+        <div className="divide-y divide-line">
+          {slice.map((r) => (
+            <article key={r.id} className="p-4">
+              <div className="mb-3 flex items-start justify-between gap-2">
+                <div>
+                  <button
+                    onClick={() => navigate(`/reports/${r.id}`)}
+                    className="font-mono text-[13px] font-bold text-accent"
+                  >
+                    #{r.id.slice(-8)}
+                  </button>
+                  <div className="mt-1 text-[15px] font-bold text-black">
+                    {r.unitType} {r.unitNo}
+                  </div>
+                </div>
+                <Badge tone={severityTone(r.severity)}>{r.severity}</Badge>
+              </div>
+              <div className="mb-3 space-y-1 text-[13px] font-medium text-black">
+                <div>{format(new Date(r.date), 'dd MMM yyyy · h:mm a')}</div>
+                <div className="line-clamp-2 text-ink-2">{r.location}</div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <Badge tone={statusTone(r.status)}>{r.status}</Badge>
+                  <Badge tone={statusTone(r.workorder?.estimateStatus ?? 'Pending')}>
+                    {r.workorder?.estimateStatus ?? 'Pending'}
+                  </Badge>
                 </div>
               </div>
-              <Badge tone={severityTone(r.severity)}>{r.severity}</Badge>
-            </div>
-            <div className="mb-3 space-y-1 text-[13px] font-medium text-black">
-              <div>{format(new Date(r.date), 'dd MMM yyyy · h:mm a')}</div>
-              <div className="line-clamp-2 text-ink-2">{r.location}</div>
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                <Badge tone={statusTone(r.status)}>{r.status}</Badge>
-                <Badge tone={statusTone(r.workorder?.estimateStatus ?? 'Pending')}>
-                  {r.workorder?.estimateStatus ?? 'Pending'}
-                </Badge>
+              <div className="flex gap-2">
+                <Button size="sm" variant="soft" className="flex-1" onClick={() => setEstimateReport(r)}>
+                  <Calculator size={14} /> Estimate
+                </Button>
+                <Button size="sm" variant="ghost" className="flex-1" onClick={() => navigate(`/reports/${r.id}`)}>
+                  Details
+                </Button>
               </div>
-            </div>
-            <div className="flex gap-2">
-              <Button size="sm" variant="soft" className="flex-1" onClick={() => setEstimateReport(r)}>
-                <Calculator size={14} /> Estimate
-              </Button>
-              <Button size="sm" variant="ghost" className="flex-1" onClick={() => navigate(`/reports/${r.id}`)}>
-                Details
-              </Button>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))}
+        </div>
         <Pagination
           from={from}
           to={to}
@@ -425,7 +425,7 @@ function Pagination({
   onPageSize: (n: number) => void
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 border-t border-line bg-[#f3f4f7] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="text-[13px] font-medium text-black">
         {total.toLocaleString()} reports · showing {from}–{to}
       </div>
@@ -433,13 +433,13 @@ function Pagination({
         <select
           value={pageSize}
           onChange={(e) => onPageSize(Number(e.target.value))}
-          className="h-9 rounded-[10px] border border-line bg-white px-3 text-[13px] font-semibold text-black outline-none"
+          className="h-9 rounded-full border border-black/10 bg-white px-3 text-[13px] font-semibold text-black shadow-[var(--shadow-rest)] outline-none"
         >
           {PAGE_SIZE_OPTIONS.map((n) => (
             <option key={n} value={n}>{n} / page</option>
           ))}
         </select>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 rounded-full bg-white p-0.5 shadow-[var(--shadow-rest)]">
           <button
             disabled={page <= 0}
             onClick={() => onPage(page - 1)}

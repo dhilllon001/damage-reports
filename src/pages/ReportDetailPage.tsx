@@ -46,8 +46,8 @@ export function ReportDetailPage() {
   if (!report) {
     return (
       <AppShell>
-        <div className="rounded-[18px] bg-card p-10 text-center shadow-[var(--shadow-rest)]">
-          <div className="text-[16px] font-bold">Report not found</div>
+        <div className="rounded-2xl bg-white p-10 text-center shadow-[var(--shadow-panel)]">
+          <div className="text-[16px] font-bold text-black">Report not found</div>
           <Link to="/" className="mt-3 inline-block text-accent">
             Back to reports
           </Link>
@@ -68,7 +68,7 @@ export function ReportDetailPage() {
 
   return (
     <AppShell>
-      <div className="mb-0 flex flex-col gap-4 border-b border-black/20 bg-black p-4 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-5">
+      <div className="mb-4 flex flex-col gap-4 rounded-2xl bg-black p-4 text-white shadow-[var(--shadow-panel)] sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-5">
         <div className="flex items-start gap-3">
           <Link
             to="/"
@@ -97,7 +97,7 @@ export function ReportDetailPage() {
         </div>
       </div>
 
-      <section className="grid grid-cols-1 border-b border-line bg-white sm:grid-cols-2 xl:grid-cols-6">
+      <section className="mb-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-6">
         {[
           { label: 'Truck / Trailer', value: report.unitNo },
           { label: 'Driver', value: report.driver ?? '—' },
@@ -114,13 +114,12 @@ export function ReportDetailPage() {
             highlight: true,
           },
           { label: 'Assigned to', value: report.assignedTo ?? 'Unassigned' },
-        ].map((item, i) => (
+        ].map((item) => (
           <div
             key={item.label}
             className={cn(
-              'border-b border-line px-4 py-3.5 xl:border-b-0',
-              i < 5 && 'xl:border-r',
-              item.highlight && 'bg-amber-soft/50'
+              'rounded-2xl bg-white px-4 py-3.5 shadow-[var(--shadow-rest)]',
+              item.highlight && 'bg-amber-soft/70 ring-1 ring-amber/15'
             )}
           >
             <div className="text-[10.5px] font-semibold uppercase tracking-[0.06em] text-ink-3">
@@ -133,32 +132,32 @@ export function ReportDetailPage() {
         ))}
       </section>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1.05fr_1fr]">
-        <section className="border-b border-line bg-white p-4 sm:p-5 xl:border-b-0 xl:border-r">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_1fr]">
+        <section className="rounded-2xl bg-white p-4 shadow-[var(--shadow-panel)] sm:p-5">
           <div className="mb-4 flex items-center gap-2">
             <Clock3 size={18} className="text-accent" />
-            <h2 className="text-[16px] font-bold tracking-[-0.02em]">
+            <h2 className="text-[16px] font-bold tracking-[-0.02em] text-black">
               Damage Timeline for {report.unitType} {report.unitNo}
             </h2>
           </div>
           <div className="relative space-y-4 pl-4 before:absolute before:bottom-2 before:left-[7px] before:top-2 before:w-px before:bg-line">
             {events.map((ev) => (
               <div key={ev.id} className="relative">
-                <div className="absolute -left-4 top-1.5 h-3.5 w-3.5 rounded-full border-2 border-accent bg-white" />
-                <div className="rounded-[16px] border border-line p-4">
+                <div className="absolute -left-4 top-1.5 h-3.5 w-3.5 rounded-full border-2 border-accent bg-white shadow-[var(--shadow-rest)]" />
+                <div className="rounded-2xl border border-line bg-[#f7f8fa] p-4 shadow-[var(--shadow-rest)]">
                   <div className="mb-1 flex flex-wrap items-center gap-2">
                     <span className="text-[12px] font-semibold text-ink-3">
                       {format(new Date(ev.date), 'dd MMM · h:mm a')}
                     </span>
                     <Badge>{ev.type}</Badge>
                   </div>
-                  <div className="text-[14px] font-bold text-ink">{ev.title}</div>
+                  <div className="text-[14px] font-bold text-black">{ev.title}</div>
                   <div className="mt-1 flex items-start gap-1.5 text-[12.5px] text-ink-2">
                     <MapPin size={14} className="mt-0.5 shrink-0 text-ink-3" />
                     {ev.description}
                   </div>
                   {report.description && (
-                    <div className="mt-3 rounded-[12px] bg-[#f5f5f7] px-3 py-2 text-[13px] text-ink-2">
+                    <div className="mt-3 rounded-[12px] bg-white px-3 py-2 text-[13px] text-ink-2 shadow-[var(--shadow-rest)]">
                       {report.description}
                     </div>
                   )}
@@ -168,8 +167,8 @@ export function ReportDetailPage() {
           </div>
         </section>
 
-        <section className="bg-white">
-          <div className="flex flex-wrap gap-1 border-b border-line p-2">
+        <section className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)]">
+          <div className="flex flex-wrap gap-1 border-b border-line bg-[#f3f4f7] p-2">
             {(
               [
                 ['investigation', 'Investigation'],
@@ -185,8 +184,8 @@ export function ReportDetailPage() {
                 className={cn(
                   'rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition',
                   tab === key
-                    ? 'bg-ink text-white'
-                    : 'text-ink-3 hover:bg-black/[0.04] hover:text-ink-2'
+                    ? 'bg-black text-white shadow-[var(--shadow-rest)]'
+                    : 'text-ink-3 hover:bg-white hover:text-black'
                 )}
               >
                 {label}
@@ -213,7 +212,7 @@ export function ReportDetailPage() {
 
                 {financeMode === 'estimate' ? (
                   report.estimateItems.length === 0 ? (
-                    <div className="rounded-[16px] border border-dashed border-line-strong py-16 text-center">
+                    <div className="rounded-2xl border border-dashed border-line-strong bg-[#f7f8fa] py-16 text-center">
                       <Calculator className="mx-auto mb-2 text-ink-3" size={24} />
                       <div className="text-[15px] font-bold text-ink-2">No estimate items added yet</div>
                       <div className="mt-1 text-[13px] text-ink-3">
@@ -224,10 +223,10 @@ export function ReportDetailPage() {
                       </Button>
                     </div>
                   ) : (
-                    <div className="overflow-hidden rounded-[16px] border border-line">
+                    <div className="overflow-hidden rounded-2xl border border-line shadow-[var(--shadow-rest)]">
                       <div className="overflow-x-auto">
                         <table className="w-full min-w-[520px]">
-                          <thead className="bg-[#fafafa] text-left text-[11px] uppercase tracking-[0.05em] text-ink-3">
+                          <thead className="bg-[#eef0f4] text-left text-[11px] font-bold uppercase tracking-[0.05em] text-black">
                             <tr>
                               <th className="px-4 py-3">Description</th>
                               <th className="px-4 py-3">Qty</th>
@@ -238,12 +237,12 @@ export function ReportDetailPage() {
                           <tbody>
                             {report.estimateItems.map((item) => (
                               <tr key={item.id} className="border-t border-line">
-                                <td className="px-4 py-3 text-[13px] font-medium">{item.description}</td>
-                                <td className="px-4 py-3 text-[13px]">{item.quantity}</td>
-                                <td className="px-4 py-3 text-[13px]">
+                                <td className="px-4 py-3 text-[13px] font-medium text-black">{item.description}</td>
+                                <td className="px-4 py-3 text-[13px] text-black">{item.quantity}</td>
+                                <td className="px-4 py-3 text-[13px] text-black">
                                   {formatCurrency(item.unitCost, item.currency)}
                                 </td>
-                                <td className="px-4 py-3 text-[13px] font-semibold">
+                                <td className="px-4 py-3 text-[13px] font-semibold text-black">
                                   {formatCurrency(item.quantity * item.unitCost, item.currency)}
                                 </td>
                               </tr>
@@ -251,18 +250,18 @@ export function ReportDetailPage() {
                           </tbody>
                         </table>
                       </div>
-                      <div className="flex items-center justify-between border-t border-line bg-[#fafafa] px-4 py-3 text-[13px]">
+                      <div className="flex items-center justify-between border-t border-line bg-[#f3f4f7] px-4 py-3 text-[13px]">
                         <span className="text-ink-3">
                           Currency: {totals.cur} · Rates USD/CAD 1.41 · USD/MXN 17.49
                         </span>
-                        <span className="font-bold">
+                        <span className="font-bold text-black">
                           {formatCurrency(totals.local, totals.cur)} · {formatCurrency(totals.usd, 'USD')}
                         </span>
                       </div>
                     </div>
                   )
                 ) : (
-                  <div className="rounded-[16px] border border-dashed border-line-strong py-16 text-center text-ink-3">
+                  <div className="rounded-2xl border border-dashed border-line-strong bg-[#f7f8fa] py-16 text-center text-ink-3">
                     No invoices yet for this report.
                   </div>
                 )}
@@ -270,7 +269,7 @@ export function ReportDetailPage() {
             )}
 
             {tab === 'investigation' && (
-              <div className="rounded-[16px] border border-dashed border-line-strong py-14 text-center">
+              <div className="rounded-2xl border border-dashed border-line-strong bg-[#f7f8fa] py-14 text-center">
                 <div className="text-[15px] font-bold text-ink-2">
                   {report.assignedTo ? 'Investigation ready' : 'Assignment required'}
                 </div>
@@ -316,7 +315,7 @@ export function ReportDetailPage() {
             )}
 
             {tab === 'ai' && (
-              <div className="rounded-[16px] bg-[#f5f5f7] p-6 text-[13px] text-ink-2">
+              <div className="rounded-2xl bg-[#f3f4f7] p-6 text-[13px] text-ink-2 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)]">
                 AI Analyzer can summarize damage photos, suggest liable party, and draft estimate line items from uploaded documents.
               </div>
             )}

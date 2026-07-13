@@ -17,7 +17,7 @@ export function Segment<T extends string>({
     <div
       role="tablist"
       className={cn(
-        'inline-flex max-w-full flex-wrap items-center rounded-full bg-[#e8e8ed] p-[3px]',
+        'inline-flex max-w-full flex-wrap items-center rounded-full bg-[#dfe1e6] p-[3px] shadow-[inset_0_1px_2px_rgba(15,23,42,0.06)]',
         className
       )}
     >
@@ -34,7 +34,7 @@ export function Segment<T extends string>({
               'inline-flex items-center gap-1.5 rounded-full font-semibold tracking-[-0.01em] transition-all duration-200 ease-[var(--ease-apple)]',
               size === 'sm' ? 'px-2.5 py-1 text-[12px]' : 'px-3.5 py-[7px] text-[13px]',
               active
-                ? 'bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.12),0_0_0_0.5px_rgba(0,0,0,0.04)]'
+                ? 'bg-white text-black shadow-[0_1px_3px_rgba(15,23,42,0.14),0_0_0_0.5px_rgba(15,23,42,0.06)]'
                 : 'text-[#3a3a3c] hover:text-black'
             )}
           >
@@ -45,7 +45,7 @@ export function Segment<T extends string>({
                   'tabular-nums text-[11px] font-bold',
                   active
                     ? 'text-black/45'
-                    : 'rounded-full bg-black/[0.06] px-1.5 py-0.5 text-black/55'
+                    : 'rounded-full bg-black/[0.07] px-1.5 py-0.5 text-black/55'
                 )}
               >
                 {opt.count}
