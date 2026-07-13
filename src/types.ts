@@ -82,4 +82,39 @@ export interface TimelineEvent {
   title: string
   description: string
   type: 'damage' | 'gate' | 'satellite' | 'event'
+  location?: string
+  actor?: string
+  images?: string[]
+}
+
+export interface DetailPhoto {
+  id: string
+  url: string
+  caption: string
+  takenAt: string
+}
+
+export interface InvoiceLine {
+  id: string
+  number: string
+  date: string
+  amount: number
+  currency: 'USD' | 'CAD' | 'MXN'
+  status: 'Draft' | 'Sent' | 'Paid'
+}
+
+export interface InvestigationNote {
+  id: string
+  author: string
+  date: string
+  note: string
+  status: string
+}
+
+export interface RepairJob {
+  id: string
+  action: string
+  vendor: string
+  scheduled: string
+  status: string
 }

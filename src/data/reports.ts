@@ -1,4 +1,11 @@
-import type { DamageReport, TimelineEvent } from '@/types'
+import type {
+  DamageReport,
+  DetailPhoto,
+  InvestigationNote,
+  InvoiceLine,
+  RepairJob,
+  TimelineEvent,
+} from '@/types'
 
 export const RATES = { usdCad: 1.41, usdMxn: 17.49 }
 
@@ -250,23 +257,147 @@ function seedReports(): DamageReport[] {
 
 export const INITIAL_REPORTS = seedReports()
 
-export const TIMELINE: Record<string, TimelineEvent[]> = {
-  '1774898683967': [
+export function buildTimeline(report: DamageReport): TimelineEvent[] {
+  const base = new Date(report.date).getTime()
+  return [
     {
-      id: 't1',
-      date: '2026-03-30T15:24:00',
-      title: 'Damage reported',
-      description: 'Doors damaged at 1276 Commerce Way, Woodstock, Ontario',
-      type: 'damage',
-    },
-    {
-      id: 't2',
-      date: '2026-03-30T14:50:00',
-      title: 'Gate exit scan',
-      description: 'Trailer 99988MSM exited yard gate B',
+      id: `${report.id}-t1`,
+      date: new Date(base - 45 * 60 * 1000).toISOString(),
+      title: 'Gate activity scanned',
+      description: `${report.unitType} ${report.unitNo} passed gate camera at yard entrance.`,
       type: 'gate',
+      location: report.location,
+      actor: 'Gate Camera',
+      images: [
+        `https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=480&h=320&fit=crop&q=80`,
+      ],
     },
-  ],
+    {
+      id: `${report.id}-t2`,
+      date: report.date,
+      title: 'Damage reported',
+      description: report.description ?? report.notes ?? 'Damage event recorded',
+      type: 'damage',
+      location: report.location,
+      actor: report.reportedBy,
+      images: [
+        `https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=480&h=320&fit=crop&q=80`,
+        `https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=480&h=320&fit=crop&q=80`,
+      ],
+    },
+    {
+      id: `${report.id}-t3`,
+      date: new Date(base + 2 * 60 * 60 * 1000).toISOString(),
+      title: 'Satellite location ping',
+      description: `Unit tracked near ${report.location.split(',')[0] ?? 'reported site'}.`,
+      type: 'satellite',
+      location: report.location,
+      actor: 'Telematics',
+    },
+    {
+      id: `${report.id}-t4`,
+      date: new Date(base + 26 * 60 * 60 * 1000).toISOString(),
+      title: 'Investigation note added',
+      description: `Liable party marked as ${report.liableParty ?? 'pending review'}. Photos reviewed by claims team.`,
+      type: 'event',
+      actor: report.assignedTo ?? 'Claims Desk',
+      images: [
+        `https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=480&h=320&fit=crop&q=80`,
+      ],
+    },
+  ]
+}
+
+export function buildDetailPhotos(report: DamageReport): DetailPhoto[] {
+  return [
+    {
+      id: 'p1',
+      url: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=640&h=420&fit=crop&q=80',
+      caption: 'Rear panel damage — left side',
+      takenAt: report.date,
+    },
+    {
+      id: 'p2',
+      url: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=640&h=420&fit=crop&q=80',
+      caption: 'Close-up of post impact',
+      takenAt: report.date,
+    },
+    {
+      id: 'p3',
+      url: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=640&h=420&fit=crop&q=80',
+      caption: 'Full unit context at yard',
+      takenAt: report.date,
+    },
+    {
+      id: 'p4',
+      url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=640&h=420&fit=crop&q=80',
+      caption: 'Door seal inspection',
+      takenAt: report.date,
+    },
+  ]
+}
+
+export function buildInvestigationNotes(report: DamageReport): InvestigationNote[] {
+  return [
+    {
+      id: 'n1',
+      author: report.assignedTo ?? 'Aditika Verma',
+      date: report.date,
+      note: `Initial review completed. Damage aligns with ${report.notes ?? 'reported area'}. Awaiting liable party confirmation.`,
+      status: 'In review',
+    },
+    {
+      id: 'n2',
+      author: 'Claims Desk',
+      date: new Date(new Date(report.date).getTime() + 5 * 60 * 60 * 1000).toISOString(),
+      note: `Driver statement collected from ${report.driver ?? 'on-file driver'}. Gate footage attached to case.`,
+      status: 'Evidence added',
+    },
+  ]
+}
+
+export function buildInvoices(report: DamageReport): InvoiceLine[] {
+  if (!report.amount) {
+    return [
+      {
+        id: 'inv-draft',
+        number: `INV-DRAFT-${report.id.slice(-4)}`,
+        date: report.date,
+        amount: 0,
+        currency: report.currency ?? 'CAD',
+        status: 'Draft',
+      },
+    ]
+  }
+  return [
+    {
+      id: 'inv-1',
+      number: `INV-${report.workorder?.workorder ?? report.id.slice(-6)}`,
+      date: report.dateDelv ? `2025-${report.dateDelv}` : report.date,
+      amount: report.amount,
+      currency: report.currency ?? 'CAD',
+      status: report.status === 'Closed' || report.status === 'Invoiced' ? 'Paid' : 'Sent',
+    },
+  ]
+}
+
+export function buildRepairJobs(report: DamageReport): RepairJob[] {
+  return [
+    {
+      id: 'rj1',
+      action: 'Move to Vendor',
+      vendor: 'Woodstock Trailer Repair',
+      scheduled: '2025-11-12',
+      status: report.status === 'Under Repair' ? 'In progress' : 'Scheduled',
+    },
+    {
+      id: 'rj2',
+      action: 'Parts order',
+      vendor: 'Panel Supply Co.',
+      scheduled: '2025-11-10',
+      status: 'Ordered',
+    },
+  ]
 }
 
 export const DAMAGE_TYPES = [
