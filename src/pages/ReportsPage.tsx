@@ -6,13 +6,12 @@ import {
   ChevronRight,
   Calculator,
   MoreHorizontal,
-  SlidersHorizontal,
   X,
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Button } from '@/components/ui/Button'
 import { Badge, severityTone, statusTone } from '@/components/ui/Badge'
-import { FilterGroup, Segment } from '@/components/ui/Segment'
+import { Segment } from '@/components/ui/Segment'
 import { SearchInput } from '@/components/ui/SearchInput'
 import { NewReportModal } from '@/components/modals/NewReportModal'
 import { EstimateDrawer } from '@/components/estimate/EstimateDrawer'
@@ -21,6 +20,54 @@ import { formatCurrency, cn } from '@/lib/cn'
 import type { DamageCategory, DamageReport, ReportStatus, UnitType } from '@/types'
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50]
+
+const STAT_STRIPE: Record<string, string> = {
+  'All Reports': 'bg-accent',
+  Draft: 'bg-black',
+  Initial: 'bg-[#636366]',
+  Investigation: 'bg-accent',
+  'Under Repair': 'bg-orange',
+  Invoiced: 'bg-green',
+  Discarded: 'bg-red',
+  Closed: 'bg-green',
+}
+
+function FilterSelect({
+  id,
+  value,
+  onChange,
+  children,
+  className,
+}: {
+  id: string
+  value: string
+  onChange: (v: string) => void
+  children: React.ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('relative min-w-0 flex-1 sm:flex-none', className)}>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-9 w-full appearance-none rounded-full border border-black/10 bg-white py-0 pl-3.5 pr-9 text-[13px] font-semibold text-black shadow-[var(--shadow-rest)] outline-none transition hover:border-black/20 focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,113,227,0.15)] sm:w-auto sm:min-w-[150px]"
+      >
+        {children}
+      </select>
+      <svg
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black/40"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        aria-hidden
+      >
+        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
+  )
+}
 
 export function ReportsPage() {
   const reports = useStore((s) => s.reports)
@@ -101,7 +148,7 @@ export function ReportsPage() {
         <SearchInput value={search} onChange={(v) => { setSearch(v); setPage(0) }} placeholder="Search reports…" />
       </div>
 
-      <section className="mb-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 xl:grid-cols-8">
+      <section className="mb-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
         {stats.map((s) => {
           const active =
             (s.label === 'All Reports' && status === 'All') ||
@@ -118,25 +165,71 @@ export function ReportsPage() {
                 setPage(0)
               }}
               className={cn(
-                'rounded-2xl bg-white px-4 py-4 text-left shadow-[var(--shadow-rest)] transition duration-200 ease-[var(--ease-apple)] hover:shadow-[var(--shadow-hover)]',
-                active && 'bg-[#f0f1f4] ring-2 ring-black/10'
+                'flex items-center gap-0 overflow-hidden rounded-2xl bg-white text-left shadow-[var(--shadow-rest)] transition duration-200 ease-[var(--ease-apple)] hover:shadow-[var(--shadow-hover)]',
+                active && 'ring-2 ring-black/10'
               )}
             >
-              <div className="text-[26px] font-extrabold leading-none tracking-[-0.05em] text-black">
-                {s.value}
-              </div>
-              <div className="mt-2 text-[11px] font-semibold uppercase tracking-[0.04em] text-ink-3">
-                {s.label}
-              </div>
+              <span className={cn('h-full w-[5px] shrink-0 self-stretch', STAT_STRIPE[s.label] ?? 'bg-black')} />
+              <span className="flex min-w-0 flex-1 items-center justify-between gap-3 px-3.5 py-3.5">
+                <span className="truncate text-[12px] font-semibold text-black">{s.label}</span>
+                <span className="text-[22px] font-extrabold leading-none tracking-[-0.04em] text-black">
+                  {s.value}
+                </span>
+              </span>
             </button>
           )
         })}
       </section>
 
-      <section className="mb-4 overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)]">
-        <div className="flex items-center gap-2 border-b border-line bg-[#f3f4f7] px-4 py-2.5">
-          <SlidersHorizontal size={14} strokeWidth={2} className="text-black/45" />
-          <span className="text-[13px] font-semibold text-black">Filters</span>
+      <section className="mb-4 rounded-2xl bg-white px-4 py-3 shadow-[var(--shadow-panel)]">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Segment
+            size="sm"
+            value={unitType}
+            onChange={(v) => { setUnitType(v); setPage(0) }}
+            options={[
+              { value: 'All', label: 'All' },
+              { value: 'Truck', label: 'Truck' },
+              { value: 'Trailer', label: 'Trailer' },
+            ]}
+          />
+
+          <FilterSelect
+            id="category-filter"
+            value={category}
+            onChange={(v) => { setCategory(v as 'All' | DamageCategory); setPage(0) }}
+          >
+            <option value="All">Category · All</option>
+            <option value="Internal">Internal ({categoryCounts.Internal})</option>
+            <option value="External">External ({categoryCounts.External})</option>
+            <option value="Mechanical">Mechanical ({categoryCounts.Mechanical})</option>
+            <option value="Tires">Tires ({categoryCounts.Tires})</option>
+          </FilterSelect>
+
+          <FilterSelect
+            id="severity-filter"
+            value={severity}
+            onChange={(v) => { setSeverity(v); setPage(0) }}
+          >
+            <option value="All">Severity · All</option>
+            <option value="Critical">Critical ({severityCounts.Critical})</option>
+            <option value="Major">Major ({severityCounts.Major})</option>
+            <option value="High">High ({severityCounts.High})</option>
+            <option value="Medium">Medium ({severityCounts.Medium})</option>
+            <option value="Minor">Minor ({severityCounts.Minor})</option>
+          </FilterSelect>
+
+          <FilterSelect
+            id="status-filter"
+            value={status}
+            onChange={(v) => { setStatus(v as 'All' | ReportStatus); setPage(0) }}
+          >
+            <option value="All">Status · All</option>
+            {(['Draft', 'Initial', 'Under Investigation', 'Under Repair', 'Invoiced', 'Closed'] as ReportStatus[]).map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </FilterSelect>
+
           {filtersActive && (
             <button
               type="button"
@@ -147,86 +240,12 @@ export function ReportsPage() {
                 setStatus('All')
                 setPage(0)
               }}
-              className="ml-auto inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[12px] font-semibold text-black shadow-[var(--shadow-rest)] transition hover:bg-[#f8f8fa]"
+              className="ml-auto inline-flex h-9 items-center gap-1 rounded-full bg-[#f3f4f7] px-3 text-[12px] font-semibold text-black transition hover:bg-[#e8e9ed]"
             >
               <X size={12} strokeWidth={2.4} />
               Clear
             </button>
           )}
-        </div>
-
-        <div className="space-y-3.5 bg-[#f7f8fa] px-4 py-4">
-          <div className="flex flex-col gap-3.5 xl:flex-row xl:items-center xl:justify-between xl:gap-6">
-            <div className="flex flex-col gap-3.5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:gap-y-3">
-              <FilterGroup label="Unit">
-                <Segment
-                  value={unitType}
-                  onChange={(v) => { setUnitType(v); setPage(0) }}
-                  options={[
-                    { value: 'All', label: 'All' },
-                    { value: 'Truck', label: 'Truck' },
-                    { value: 'Trailer', label: 'Trailer' },
-                  ]}
-                />
-              </FilterGroup>
-
-              <div className="hidden h-7 w-px bg-line-strong/70 lg:block" aria-hidden />
-
-              <FilterGroup label="Category">
-                <Segment
-                  value={category}
-                  onChange={(v) => { setCategory(v); setPage(0) }}
-                  options={[
-                    { value: 'All', label: 'All' },
-                    { value: 'Internal', label: 'Internal', count: categoryCounts.Internal },
-                    { value: 'External', label: 'External', count: categoryCounts.External },
-                    { value: 'Mechanical', label: 'Mechanical', count: categoryCounts.Mechanical },
-                    { value: 'Tires', label: 'Tires', count: categoryCounts.Tires },
-                  ]}
-                />
-              </FilterGroup>
-            </div>
-
-            <div className="relative shrink-0">
-              <label className="sr-only" htmlFor="status-filter">Status</label>
-              <select
-                id="status-filter"
-                value={status}
-                onChange={(e) => { setStatus(e.target.value as 'All' | ReportStatus); setPage(0) }}
-                className="h-9 appearance-none rounded-full border border-black/10 bg-white py-0 pl-3.5 pr-9 text-[13px] font-semibold text-black shadow-[var(--shadow-rest)] outline-none transition hover:border-black/20 focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,113,227,0.15)]"
-              >
-                <option value="All">Status · All</option>
-                {(['Draft', 'Initial', 'Under Investigation', 'Under Repair', 'Invoiced', 'Closed'] as ReportStatus[]).map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
-              <svg
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black/40"
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                aria-hidden
-              >
-                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-          </div>
-
-          <FilterGroup label="Severity">
-            <Segment
-              value={severity}
-              onChange={(v) => { setSeverity(v); setPage(0) }}
-              options={[
-                { value: 'All', label: 'All' },
-                { value: 'Critical', label: 'Critical', count: severityCounts.Critical },
-                { value: 'Major', label: 'Major', count: severityCounts.Major },
-                { value: 'High', label: 'High', count: severityCounts.High },
-                { value: 'Medium', label: 'Medium', count: severityCounts.Medium },
-                { value: 'Minor', label: 'Minor', count: severityCounts.Minor },
-              ]}
-            />
-          </FilterGroup>
         </div>
       </section>
 
@@ -249,7 +268,7 @@ export function ReportsPage() {
                 ].map((h) => (
                   <th
                     key={h}
-                    className="bg-[#eef0f4] px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.04em] text-black"
+                    className="bg-[#eef0f4] px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.04em] text-black"
                   >
                     {h}
                   </th>
@@ -265,7 +284,7 @@ export function ReportsPage() {
                     idx % 2 === 1 && 'bg-[#fafafb]'
                   )}
                 >
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3.5">
                     <button
                       onClick={() => navigate(`/reports/${r.id}`)}
                       className="font-mono text-[13px] font-bold text-accent hover:underline"
@@ -273,38 +292,38 @@ export function ReportsPage() {
                       #{r.id.slice(-8)}
                     </button>
                   </td>
-                  <td className="whitespace-nowrap px-5 py-4 text-[13px] font-medium text-black">
+                  <td className="whitespace-nowrap px-4 py-3.5 text-[13px] font-medium text-black">
                     {format(new Date(r.date), 'dd MMM yy, h:mm a')}
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3.5">
                     <div className="text-[13px] font-bold text-black">{r.unitType} {r.unitNo}</div>
                     <div className="mt-0.5 text-[12px] text-ink-3">{r.source}</div>
                   </td>
-                  <td className="px-5 py-4 text-[13px] font-medium text-black">{r.liableParty ?? '—'}</td>
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3.5 text-[13px] font-medium text-black">{r.liableParty ?? '—'}</td>
+                  <td className="px-4 py-3.5">
                     <Badge tone={severityTone(r.severity)}>{r.severity}</Badge>
                   </td>
-                  <td className="max-w-[240px] px-5 py-4 text-[13px] font-medium text-black">
+                  <td className="max-w-[220px] px-4 py-3.5 text-[13px] font-medium text-black">
                     <span className="line-clamp-2">{r.location}</span>
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3.5">
                     <Badge tone={statusTone(r.status)}>{r.status}</Badge>
                   </td>
-                  <td className="whitespace-nowrap px-5 py-4 text-[13px] font-bold text-black">
+                  <td className="whitespace-nowrap px-4 py-3.5 text-[13px] font-bold text-black">
                     {r.amount != null
                       ? formatCurrency(r.amount, r.currency ?? 'CAD')
                       : '—'}
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3.5">
                     <Badge tone={statusTone(r.workorder?.estimateStatus ?? 'Pending')}>
                       {r.workorder?.estimateStatus ?? 'Pending'}
                     </Badge>
                   </td>
-                  <td className="px-5 py-4">
+                  <td className="px-4 py-3.5">
                     <div className="flex items-center gap-1.5">
                       <Button
                         size="sm"
-                        variant="soft"
+                        variant="primary"
                         onClick={() => setEstimateReport(r)}
                       >
                         <Calculator size={14} strokeWidth={2} />
@@ -323,7 +342,7 @@ export function ReportsPage() {
               ))}
               {slice.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="px-5 py-16 text-center text-[14px] font-medium text-ink-3">
+                  <td colSpan={10} className="px-4 py-16 text-center text-[14px] font-medium text-ink-3">
                     No reports match your filters.
                   </td>
                 </tr>
@@ -373,7 +392,7 @@ export function ReportsPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="soft" className="flex-1" onClick={() => setEstimateReport(r)}>
+                <Button size="sm" variant="primary" className="flex-1" onClick={() => setEstimateReport(r)}>
                   <Calculator size={14} /> Estimate
                 </Button>
                 <Button size="sm" variant="ghost" className="flex-1" onClick={() => navigate(`/reports/${r.id}`)}>
@@ -425,7 +444,7 @@ function Pagination({
   onPageSize: (n: number) => void
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-line bg-[#f3f4f7] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 border-t border-line bg-[#f3f4f7] px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
       <div className="text-[13px] font-medium text-black">
         {total.toLocaleString()} reports · showing {from}–{to}
       </div>

@@ -14,7 +14,7 @@ const variants: Record<Variant, string> = {
   ghost: 'bg-transparent text-ink-2 hover:bg-black/[0.04] border border-line',
   danger: 'bg-red text-white hover:bg-[#c43329]',
   dark: 'bg-ink text-white hover:bg-[#333]',
-  soft: 'bg-accent-soft text-accent hover:bg-[#d7e9fa]',
+  soft: 'bg-accent text-white hover:bg-[#0066cc] shadow-[var(--shadow-rest)]',
 }
 
 const sizes = {
