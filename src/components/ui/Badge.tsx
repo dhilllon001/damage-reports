@@ -1,12 +1,12 @@
 import { cn } from '@/lib/cn'
 
 const tones = {
-  neutral: 'bg-[#f2f2f7] text-ink-2',
-  blue: 'bg-accent-soft text-accent',
-  green: 'bg-green-soft text-green',
-  orange: 'bg-orange-soft text-orange',
-  red: 'bg-red-soft text-red',
-  amber: 'bg-amber-soft text-amber',
+  neutral: 'bg-[#f2f2f7] text-black',
+  blue: 'bg-accent-soft text-[#0058b0]',
+  green: 'bg-green-soft text-[#0a7a3e]',
+  orange: 'bg-orange-soft text-[#9a4d00]',
+  red: 'bg-red-soft text-[#b80012]',
+  amber: 'bg-amber-soft text-[#7a5200]',
 } as const
 
 export function Badge({
@@ -21,7 +21,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold tracking-[-0.01em]',
+        'inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[-0.01em]',
         tones[tone],
         className
       )}

@@ -77,7 +77,7 @@ export function ReportDetailPage() {
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <div className="font-mono text-[15px] font-bold tracking-[-0.02em]">
+            <div className="font-mono text-[15px] font-bold tracking-[-0.02em] text-white">
               #{report.id}
             </div>
             <div className="mt-2 flex flex-wrap gap-1.5">

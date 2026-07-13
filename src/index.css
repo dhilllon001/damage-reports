@@ -2,40 +2,40 @@
 
 @theme {
   --font-sans: "Manrope", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  --color-bg: #f5f5f7;
+  --color-bg: #f2f2f4;
   --color-card: #ffffff;
-  --color-ink: #1d1d1f;
-  --color-ink-2: #424245;
-  --color-ink-3: #86868b;
-  --color-line: #e8e8ed;
-  --color-line-strong: #d2d2d7;
+  --color-ink: #000000;
+  --color-ink-2: #1a1a1a;
+  --color-ink-3: #6e6e73;
+  --color-line: #e5e5ea;
+  --color-line-strong: #d1d1d6;
   --color-accent: #0071e3;
-  --color-accent-soft: #e8f2fc;
-  --color-green: #1d7a46;
-  --color-green-soft: #e8f5ec;
-  --color-orange: #c47a00;
-  --color-orange-soft: #fff4e0;
-  --color-red: #de3b2f;
-  --color-red-soft: #fdeceb;
-  --color-amber: #b8860b;
-  --color-amber-soft: #fbf3d8;
+  --color-accent-soft: #eaf3fc;
+  --color-green: #0a7a3e;
+  --color-green-soft: #e6f6ec;
+  --color-orange: #b85c00;
+  --color-orange-soft: #fff1e0;
+  --color-red: #d70015;
+  --color-red-soft: #ffe5e8;
+  --color-amber: #9a6700;
+  --color-amber-soft: #fff6db;
   --radius-btn: 980px;
   --radius-input: 12px;
-  --radius-card: 18px;
-  --radius-modal: 24px;
-  --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-  --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.06);
-  --shadow-overlay: 0 8px 40px rgba(0, 0, 0, 0.14);
+  --radius-card: 16px;
+  --radius-modal: 22px;
+  --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.16);
   --ease-apple: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
-  --bg: #f5f5f7;
+  --bg: #f2f2f4;
   --card: #ffffff;
-  --ink: #1d1d1f;
-  --ink-2: #424245;
-  --ink-3: #86868b;
-  --line: #e8e8ed;
+  --ink: #000000;
+  --ink-2: #1a1a1a;
+  --ink-3: #6e6e73;
+  --line: #e5e5ea;
   --accent: #0071e3;
 }
 
@@ -53,14 +53,13 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   font-size: 14px;
-  line-height: 1.5;
-  color: var(--ink);
-  background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(0, 113, 227, 0.06), transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, rgba(29, 122, 70, 0.05), transparent 50%),
-    var(--bg);
+  line-height: 1.45;
+  color: #000000;
+  background: #f2f2f4;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 button,
@@ -68,6 +67,7 @@ input,
 select,
 textarea {
   font: inherit;
+  color: inherit;
 }
 
 ::-webkit-scrollbar {

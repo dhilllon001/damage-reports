@@ -12,7 +12,7 @@ export function Segment<T extends string>({
   className?: string
 }) {
   return (
-    <div className={cn('inline-flex flex-wrap gap-1 rounded-full bg-[#ececef] p-1', className)}>
+    <div className={cn('inline-flex flex-wrap gap-0.5 rounded-[10px] bg-[#ebebed] p-0.5', className)}>
       {options.map((opt) => {
         const active = opt.value === value
         return (
@@ -21,15 +21,15 @@ export function Segment<T extends string>({
             type="button"
             onClick={() => onChange(opt.value)}
             className={cn(
-              'rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition-all duration-200 ease-[var(--ease-apple)]',
+              'rounded-[8px] px-3 py-1.5 text-[12.5px] font-semibold transition-all duration-200 ease-[var(--ease-apple)]',
               active
-                ? 'bg-white text-ink shadow-[var(--shadow-rest)]'
-                : 'text-ink-3 hover:text-ink-2'
+                ? 'bg-white text-black shadow-[0_1px_2px_rgba(0,0,0,0.08)]'
+                : 'text-[#3a3a3c] hover:text-black'
             )}
           >
             {opt.label}
             {typeof opt.count === 'number' && (
-              <span className={cn('ml-1.5', active ? 'text-ink-3' : 'text-ink-3/80')}>
+              <span className={cn('ml-1.5 tabular-nums', active ? 'text-ink-3' : 'text-[#8e8e93]')}>
                 {opt.count}
               </span>
             )}
