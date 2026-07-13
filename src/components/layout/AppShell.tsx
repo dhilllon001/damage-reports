@@ -9,18 +9,21 @@ export function AppShell({
   search,
   onSearch,
   onNew,
+  lockViewport = false,
 }: {
   children: React.ReactNode
   search?: string
   onSearch?: (v: string) => void
   onNew?: () => void
+  /** When true, page does not scroll — children manage their own scroll areas. */
+  lockViewport?: boolean
 }) {
   const location = useLocation()
   const isDetail = location.pathname.startsWith('/reports/')
 
   return (
-    <div className="min-h-full bg-bg">
-      <header className="sticky top-0 z-40 bg-black shadow-[0_8px_24px_rgba(15,23,42,0.18)]">
+    <div className={cn('bg-bg', lockViewport ? 'flex h-dvh flex-col overflow-hidden' : 'min-h-full')}>
+      <header className="sticky top-0 z-40 shrink-0 bg-black shadow-[0_8px_24px_rgba(15,23,42,0.18)]">
         <div className="flex h-14 w-full items-center gap-3 px-3 sm:px-4">
           <Link to="/" className="shrink-0">
             <div className="text-[16px] font-bold tracking-[-0.03em] text-white">
@@ -64,7 +67,12 @@ export function AppShell({
           </div>
         </div>
       </header>
-      <main className={cn('w-full px-3 py-4 sm:px-4 sm:py-5', isDetail && 'pb-10')}>
+      <main
+        className={cn(
+          'w-full px-3 py-4 sm:px-4 sm:py-5',
+          lockViewport ? 'flex min-h-0 flex-1 flex-col overflow-hidden' : isDetail && 'pb-10'
+        )}
+      >
         {children}
       </main>
     </div>

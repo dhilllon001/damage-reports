@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import {
   ArrowLeft,
@@ -35,13 +35,13 @@ type DetailTab = 'investigation' | 'finance' | 'photos' | 'repairs' | 'ai'
 
 export function ReportDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const report = useStore((s) => s.reports.find((r) => r.id === id))
   const updateReport = useStore((s) => s.updateReport)
   const [tab, setTab] = useState<DetailTab>('finance')
   const [financeMode, setFinanceMode] = useState<'estimate' | 'invoice'>('estimate')
   const [estimateOpen, setEstimateOpen] = useState(false)
   const [repairOpen, setRepairOpen] = useState(false)
-  const [mergeOpen, setMergeOpen] = useState(false)
 
   const totals = useMemo(() => {
     if (!report) return { local: 0, usd: 0, cur: 'CAD' as const }
@@ -62,7 +62,7 @@ export function ReportDetailPage() {
 
   if (!report) {
     return (
-      <AppShell>
+      <AppShell lockViewport>
         <div className="rounded-2xl bg-white p-10 text-center shadow-[var(--shadow-panel)]">
           <div className="text-[16px] font-bold text-black">Report not found</div>
           <Link to="/" className="mt-3 inline-block text-accent">
@@ -74,8 +74,9 @@ export function ReportDetailPage() {
   }
 
   return (
-    <AppShell>
-      <div className="mb-4 rounded-2xl bg-white px-4 py-3.5 shadow-[var(--shadow-panel)] sm:px-5">
+    <AppShell lockViewport>
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden">
+      <div className="shrink-0 rounded-2xl bg-white px-4 py-3.5 shadow-[var(--shadow-panel)] sm:px-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 flex-wrap items-center gap-2.5 sm:gap-3">
             <Link
@@ -97,8 +98,7 @@ export function ReportDetailPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setMergeOpen((v) => !v)}
-              className={cn(mergeOpen && 'border-accent bg-accent-soft text-accent')}
+              onClick={() => navigate(`/reports/${report.id}/compare`)}
             >
               <GitMerge size={14} /> Compare / Merge
             </Button>
@@ -110,31 +110,9 @@ export function ReportDetailPage() {
             </Button>
           </div>
         </div>
-
-        {mergeOpen && (
-          <div className="mt-3 rounded-2xl border border-line bg-[#f7f8fa] p-4">
-            <div className="mb-2 text-[13px] font-bold text-black">Compare & Merge</div>
-            <p className="mb-3 text-[12.5px] text-ink-3">
-              Select another report for {report.unitNo} to compare photos, notes, and estimate lines before merging.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <button className="rounded-xl border border-line bg-white px-3 py-2 text-left text-[12.5px] shadow-[var(--shadow-rest)]">
-                <div className="font-semibold text-black">#{String(Number(report.id) + 1).slice(-8)}</div>
-                <div className="text-ink-3">Same unit · Draft</div>
-              </button>
-              <button className="rounded-xl border border-line bg-white px-3 py-2 text-left text-[12.5px] shadow-[var(--shadow-rest)]">
-                <div className="font-semibold text-black">#{String(Number(report.id) + 2).slice(-8)}</div>
-                <div className="text-ink-3">Nearby location · Initial</div>
-              </button>
-              <Button size="sm" variant="primary" className="ml-auto">
-                Merge selected
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
 
-      <section className="mb-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-6">
+      <section className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
         {[
           { label: 'Truck / Trailer', value: report.unitNo },
           { label: 'Driver', value: report.driver ?? '—' },
@@ -155,23 +133,23 @@ export function ReportDetailPage() {
           <div
             key={item.label}
             className={cn(
-              'rounded-2xl bg-white px-4 py-3.5 shadow-[var(--shadow-rest)]',
+              'rounded-2xl bg-white px-3 py-2.5 shadow-[var(--shadow-rest)] sm:px-4 sm:py-3',
               item.highlight && 'bg-amber-soft/70 ring-1 ring-amber/15'
             )}
           >
-            <div className="text-[10.5px] font-semibold uppercase tracking-[0.06em] text-ink-3">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.05em] text-ink-3">
               {item.label}
             </div>
-            <div className="mt-1 line-clamp-2 text-[13.5px] font-semibold text-black">
+            <div className="mt-0.5 line-clamp-1 text-[12.5px] font-semibold text-black sm:text-[13px]">
               {item.value}
             </div>
           </div>
         ))}
       </section>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_1fr]">
-        <section className="rounded-2xl bg-white p-4 shadow-[var(--shadow-panel)] sm:p-5">
-          <div className="mb-4 flex items-center justify-between gap-2">
+      <div className="grid min-h-0 flex-1 gap-3 overflow-hidden xl:grid-cols-[1.05fr_1fr]">
+        <section className="flex min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)]">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-line px-4 py-3 sm:px-5">
             <div className="flex items-center gap-2">
               <Clock3 size={18} className="text-accent" />
               <h2 className="text-[16px] font-bold tracking-[-0.02em] text-black">
@@ -183,6 +161,7 @@ export function ReportDetailPage() {
             </span>
           </div>
 
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
           <div className="relative space-y-4 pl-5 before:absolute before:bottom-3 before:left-[9px] before:top-3 before:w-px before:bg-line">
             {events.map((ev) => (
               <div key={ev.id} className="relative">
@@ -225,10 +204,11 @@ export function ReportDetailPage() {
               </div>
             ))}
           </div>
+          </div>
         </section>
 
-        <section className="overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)]">
-          <div className="flex flex-wrap gap-1 border-b border-line bg-[#f3f4f7] p-2">
+        <section className="flex min-h-0 flex-col overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-panel)]">
+          <div className="flex shrink-0 flex-wrap gap-1 border-b border-line bg-[#f3f4f7] p-2">
             {(
               [
                 ['investigation', 'Investigation'],
@@ -253,7 +233,7 @@ export function ReportDetailPage() {
             ))}
           </div>
 
-          <div className="p-5">
+          <div className="min-h-0 flex-1 overflow-y-auto p-5">
             {tab === 'finance' && (
               <div>
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -468,6 +448,7 @@ export function ReportDetailPage() {
             )}
           </div>
         </section>
+      </div>
       </div>
 
       <EstimateDrawer
