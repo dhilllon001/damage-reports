@@ -6,11 +6,13 @@ import {
   ChevronRight,
   Calculator,
   MoreHorizontal,
+  SlidersHorizontal,
+  X,
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { Button } from '@/components/ui/Button'
 import { Badge, severityTone, statusTone } from '@/components/ui/Badge'
-import { Segment } from '@/components/ui/Segment'
+import { FilterGroup, Segment } from '@/components/ui/Segment'
 import { SearchInput } from '@/components/ui/SearchInput'
 import { NewReportModal } from '@/components/modals/NewReportModal'
 import { EstimateDrawer } from '@/components/estimate/EstimateDrawer'
@@ -131,61 +133,102 @@ export function ReportsPage() {
         })}
       </section>
 
-      <section className="border-b border-line bg-white px-3 py-4 sm:px-4">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-          <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-start lg:gap-x-8 lg:gap-y-4">
-            <div className="space-y-2">
-              <div className="text-[11px] font-bold uppercase tracking-[0.05em] text-black">Unit Type</div>
-              <Segment
-                value={unitType}
-                onChange={(v) => { setUnitType(v); setPage(0) }}
-                options={[
-                  { value: 'All', label: 'All' },
-                  { value: 'Truck', label: 'Truck' },
-                  { value: 'Trailer', label: 'Trailer' },
-                ]}
-              />
+      <section className="border-b border-line bg-[#fbfbfc]">
+        <div className="flex items-center gap-2 border-b border-line/80 px-4 py-2.5">
+          <SlidersHorizontal size={14} strokeWidth={2} className="text-black/40" />
+          <span className="text-[13px] font-semibold text-black">Filters</span>
+          {(unitType !== 'All' || category !== 'All' || severity !== 'All' || status !== 'All') && (
+            <button
+              type="button"
+              onClick={() => {
+                setUnitType('All')
+                setCategory('All')
+                setSeverity('All')
+                setStatus('All')
+                setPage(0)
+              }}
+              className="ml-auto inline-flex items-center gap-1 rounded-full bg-black/[0.05] px-2.5 py-1 text-[12px] font-semibold text-black transition hover:bg-black/[0.08]"
+            >
+              <X size={12} strokeWidth={2.4} />
+              Clear
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-3.5 px-4 py-3.5 lg:gap-3">
+          <div className="flex flex-col gap-3.5 xl:flex-row xl:items-center xl:justify-between xl:gap-6">
+            <div className="flex flex-col gap-3.5 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6 lg:gap-y-3">
+              <FilterGroup label="Unit">
+                <Segment
+                  value={unitType}
+                  onChange={(v) => { setUnitType(v); setPage(0) }}
+                  options={[
+                    { value: 'All', label: 'All' },
+                    { value: 'Truck', label: 'Truck' },
+                    { value: 'Trailer', label: 'Trailer' },
+                  ]}
+                />
+              </FilterGroup>
+
+              <div className="hidden h-7 w-px bg-line lg:block" aria-hidden />
+
+              <FilterGroup label="Category">
+                <Segment
+                  value={category}
+                  onChange={(v) => { setCategory(v); setPage(0) }}
+                  options={[
+                    { value: 'All', label: 'All' },
+                    { value: 'Internal', label: 'Internal', count: categoryCounts.Internal },
+                    { value: 'External', label: 'External', count: categoryCounts.External },
+                    { value: 'Mechanical', label: 'Mechanical', count: categoryCounts.Mechanical },
+                    { value: 'Tires', label: 'Tires', count: categoryCounts.Tires },
+                  ]}
+                />
+              </FilterGroup>
             </div>
-            <div className="space-y-2">
-              <div className="text-[11px] font-bold uppercase tracking-[0.05em] text-black">Category</div>
-              <Segment
-                value={category}
-                onChange={(v) => { setCategory(v); setPage(0) }}
-                options={[
-                  { value: 'All', label: 'All' },
-                  { value: 'Internal', label: 'Internal', count: categoryCounts.Internal },
-                  { value: 'External', label: 'External', count: categoryCounts.External },
-                  { value: 'Mechanical', label: 'Mechanical', count: categoryCounts.Mechanical },
-                  { value: 'Tires', label: 'Tires', count: categoryCounts.Tires },
-                ]}
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="text-[11px] font-bold uppercase tracking-[0.05em] text-black">Severity</div>
-              <Segment
-                value={severity}
-                onChange={(v) => { setSeverity(v); setPage(0) }}
-                options={[
-                  { value: 'All', label: 'All' },
-                  { value: 'Critical', label: 'Critical', count: severityCounts.Critical },
-                  { value: 'Major', label: 'Major', count: severityCounts.Major },
-                  { value: 'High', label: 'High', count: severityCounts.High },
-                  { value: 'Medium', label: 'Medium', count: severityCounts.Medium },
-                  { value: 'Minor', label: 'Minor', count: severityCounts.Minor },
-                ]}
-              />
+
+            <div className="relative shrink-0">
+              <label className="sr-only" htmlFor="status-filter">Status</label>
+              <select
+                id="status-filter"
+                value={status}
+                onChange={(e) => { setStatus(e.target.value as 'All' | ReportStatus); setPage(0) }}
+                className="h-9 appearance-none rounded-full border border-black/10 bg-white py-0 pl-3.5 pr-9 text-[13px] font-semibold text-black shadow-[0_1px_2px_rgba(0,0,0,0.04)] outline-none transition hover:border-black/20 focus:border-accent focus:shadow-[0_0_0_3px_rgba(0,113,227,0.15)]"
+              >
+                <option value="All">Status · All</option>
+                {(['Draft', 'Initial', 'Under Investigation', 'Under Repair', 'Invoiced', 'Closed'] as ReportStatus[]).map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <svg
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black/40"
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                aria-hidden
+              >
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
           </div>
-          <select
-            value={status}
-            onChange={(e) => { setStatus(e.target.value as 'All' | ReportStatus); setPage(0) }}
-            className="h-9 shrink-0 rounded-[10px] border border-line bg-white px-3.5 text-[13px] font-semibold text-black outline-none focus:border-black"
-          >
-            <option value="All">Status: All</option>
-            {(['Draft', 'Initial', 'Under Investigation', 'Under Repair', 'Invoiced', 'Closed'] as ReportStatus[]).map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
+
+          <div className="h-px w-full bg-line/80" />
+
+          <FilterGroup label="Severity">
+            <Segment
+              value={severity}
+              onChange={(v) => { setSeverity(v); setPage(0) }}
+              options={[
+                { value: 'All', label: 'All' },
+                { value: 'Critical', label: 'Critical', count: severityCounts.Critical },
+                { value: 'Major', label: 'Major', count: severityCounts.Major },
+                { value: 'High', label: 'High', count: severityCounts.High },
+                { value: 'Medium', label: 'Medium', count: severityCounts.Medium },
+                { value: 'Minor', label: 'Minor', count: severityCounts.Minor },
+              ]}
+            />
+          </FilterGroup>
         </div>
       </section>
 
